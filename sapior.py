@@ -84,9 +84,12 @@ def arrange_labels():#labels is field with bombs
         '1':'blue',
         '2':'green',
         '3':'red',
+        '4':'brown',
+        '5':'brown',
         '':'yellow'
     }
     for i in range(len(files2)):
+        print(files2[i])
         label.append(Label(window,text=files2[i],fg=give_color[files2[i]],width=2))
 
     #arange all label in the window
