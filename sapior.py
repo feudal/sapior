@@ -13,11 +13,51 @@ window.wm_title("Sapior")
 window.resizable(width=0, height=0)
 window.call('wm', 'attributes', '.', '-topmost', '1')
 
-def hide_button(i):
+def expend_cell(i):
+    if 0 >= int(i) >= 180:
+        return False
+    if label[int(i)].cget('text') == '*':
+        return False
+    if label[int(i)].cget('text') == '-':
+        return False
+
+    return True
+
+def open_cell_aruound(i):
+    #don't expend cell with numbers
+    if int(label[int(i)].cget('text')) > 0:
+        return
+
+    i=int(i)
+
+    if(expend_cell(i-16)):
+        open_cell(i-16)
+    if(expend_cell(i-17)):
+        open_cell(i-17)
+    if(expend_cell(i-18)):
+        open_cell(i-18)
+    if(expend_cell(i-1)):
+        open_cell(i-1)
+    if(expend_cell(i+1)):
+        open_cell(i+1)
+    if(expend_cell(i+16)):
+        open_cell(i+16)
+    if(expend_cell(i+17)):
+        open_cell(i+17)
+    if(expend_cell(i+18)):
+        open_cell(i+18)
+
+def open_cell(i):
+    #don't open cell that don't exist
+    if 0 > int(i) > 180:
+        return
     print(i)
     print(btn[int(i)])
     btn[int(i)].grid_forget()
     #label[int(i)].config(fg="green")#change state of label under buttons
+    if(label[int(i)]).cget('text') == '':
+        label[int(i)].config(bg="grey95",fg="grey95",text='0')
+        open_cell_aruound(i)
 
 def create_top():
     #top of window
@@ -120,6 +160,13 @@ def arange_numbers(m):
             n[i]=count_bombs(n,i)
     print('arange_numbers_end')
     return n
+
+def hide_borders():
+    for i in range(238):
+        if label[i].cget('text') == '-':
+            label[i].grid_forget()
+            btn[i].grid_forget()
+
 #----------------------------------------------------
 def create_field():
     print('create_field')
@@ -138,8 +185,8 @@ def create_field():
     map=arange_numbers(map)
     show(map,17)
     #delete_borders
-    map=delete_borders(map)
-    show(map,15)
+    # map=delete_borders(map)
+    # show(map,17)
 
     for i in map:
         files2.append(str(i))
@@ -164,29 +211,30 @@ def arrange_labels():#labels is field with bombs
         label.append(Label(window,text=files2[i],fg=give_color[files2[i]],width=2))
 
     #arange all label in the window
-    for j in range(0,12):
-        for i in range(15*j,15*(j+1)):
+    for j in range(0,14):
+        for i in range(17*j,17*(j+1)):
             # print(j, ' ', i)
-            label[i].grid(row=j+1,column=i-15*j)
+            label[i].grid(row=j+1,column=i-17*j)
 
 def arrange_buttons():
     #create 180 buttons with text
-    for i in range(180):
+    for i in range(238):
         files.append(str(i))
 
     for i in range(len(files)):
-        btn.append(Button(window,text=files[i],width=2,command=lambda c=i:hide_button(btn[c].cget("text"))))#fg="linen",
+        btn.append(Button(window,text=files[i],width=2,fg="grey95",command=lambda c=i:open_cell(btn[c].cget("text"))))#fg="grey95",
 
     #arange all button in the window
-    for j in range(0,12):
-        for i in range(15*j,15*(j+1)):
+    for j in range(0,14):
+        for i in range(17*j,17*(j+1)):
             # print(j, ' ', i)
-            btn[i].grid(row=j+1,column=i-15*j)
+            btn[i].grid(row=j+1,column=i-17*j)
 
 def init_window():
     create_top()
     arrange_labels()
-    #arrange_buttons()
+    arrange_buttons()
+    hide_borders()
 
 init_window()
 
