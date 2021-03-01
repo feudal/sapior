@@ -25,8 +25,9 @@ def create_top():
     l1.grid(row=0,column=0,columnspan=8)
     l2=Label(window,text="nr")
     l2.grid(row=0,column=6,columnspan=7)
+#------------------------------------------
 
-def count_combs(m,elem):
+def count_bombs(m,elem):
     try:
         bombs=0
         if m[elem-14] =="*":
@@ -69,11 +70,16 @@ def create_field():
     #shake the list map
     shuffle(map)
 
+    #createborders
+    map=create_borders(map)
     #put the numbers around the bombs
     map=arange_numbers(map)
+    #delete_borders
+    map=delete_borders(map)
 
     for i in map:
         files2.append(str(i))
+#------------------------------------------
 
 def arrange_labels():#labels is field with bombs
     #create 180 labels with text
@@ -86,10 +92,10 @@ def arrange_labels():#labels is field with bombs
         '3':'red',
         '4':'brown',
         '5':'brown',
-        '':'yellow'
+        '-':'brown',
+        '':'brown'
     }
     for i in range(len(files2)):
-        print(files2[i])
         label.append(Label(window,text=files2[i],fg=give_color[files2[i]],width=2))
 
     #arange all label in the window
