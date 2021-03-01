@@ -28,41 +28,101 @@ def create_top():
 #------------------------------------------
 
 def count_bombs(m,elem):
-    try:
-        bombs=0
-        if m[elem-14] =="*":
-            bombs+=1
-        if m[elem-15] =="*":
-            bombs+=1
-        if m[elem-16] =="*":
-            bombs+=1
+    bombs=0
+    if m[elem-16] =="*":
+        bombs+=1
+    if m[elem-17] =="*":
+        bombs+=1
+    if m[elem-18] =="*":
+        bombs+=1
 
-        if m[elem-1] =="*":
-            bombs+=1
-        if m[elem+1] =="*":
-            bombs+=1
+    if m[elem-1] =="*":
+        bombs+=1
+    if m[elem+1] =="*":
+        bombs+=1
 
-        if m[elem+14] =="*":
-            bombs+=1
-        if m[elem+15] =="*":
-            bombs+=1
-        if m[elem+16] =="*":
-            bombs+=1
-    except:
-        pass
+    if m[elem+16] =="*":
+        bombs+=1
+    if m[elem+17] =="*":
+        bombs+=1
+    if m[elem+18] =="*":
+        bombs+=1
 
     if int(bombs) != 0:
         return bombs
     else:
         return ''
 
-def arange_numbers(m):
-    for i in range(180):
-        if m[i]!="*":
-            m[i]=count_combs(m,i)
-    return m
+def show(m,lenght):
+    print('show')
+    n=m.copy()
+    while len(n) >= lenght:
+        for i in range(lenght):
+            if n[i]=='':
+                print(' ', end='|')
+            else:
+                print(n[i], end='|')
+        del n[:lenght]
+        print('')
+    print('Show function end.','ramain ', len(n), '.', 'Elements in field: ', len(m))
 
+def to_bideminsional(m,elem):
+    print('to_bideminsional')
+    n=m.copy()
+    bi_n=[]
+
+    for i in range(int(len(n)/elem)):
+        bi_n.append(n[:elem])
+        del n[:elem]
+    print('to_bideminsional_end')
+
+    return bi_n
+
+def to_list(m):
+    print('to_list')
+    n=m.copy()
+    l=[]
+    for i in range(len(n)):
+        for j in range(len(n[i])):
+            l.append(n[i][j])
+    print('to_list_end')
+    return l
+
+def create_borders(m):
+    print('create_borders')
+    n=m.copy()
+    n=to_bideminsional(n,15)
+
+    for i in range(len(n)):
+        n[i].append('-')#left
+        n[i].insert(0,'-')#right
+    n.append(['-']*17)#bottom
+    n.insert(0,['-']*17)#top
+
+    n=to_list(n)
+    print('create_borders_end')
+
+    return n
+
+def delete_borders(m):
+    print('delete_borders')
+    n=m.copy()
+    while '-' in n:
+        n.remove('-')
+    print('delete_borders_end')
+    return n
+
+def arange_numbers(m):
+    n=m.copy()
+    print('arange_numbers')
+    for i in range(len(n)):
+        if n[i]!="*" and n[i]!='-':
+            n[i]=count_bombs(n,i)
+    print('arange_numbers_end')
+    return n
+#----------------------------------------------------
 def create_field():
+    print('create_field')
     #plant 35 bombs in fiels map
     map1=["*"]*25
     map2=['']*155
@@ -70,15 +130,20 @@ def create_field():
     #shake the list map
     shuffle(map)
 
+    show(map,15)
     #createborders
     map=create_borders(map)
+    show(map,17)
     #put the numbers around the bombs
     map=arange_numbers(map)
+    show(map,17)
     #delete_borders
     map=delete_borders(map)
+    show(map,15)
 
     for i in map:
         files2.append(str(i))
+    print('create_field_end')
 #------------------------------------------
 
 def arrange_labels():#labels is field with bombs
