@@ -1,5 +1,7 @@
 from tkinter import *
 import time
+import datetime
+from time import strftime
 from random import shuffle
 
 window=Tk()
@@ -12,6 +14,19 @@ label=[]
 window.wm_title("Sapior")
 window.resizable(width=0, height=0)
 window.call('wm', 'attributes', '.', '-topmost', '1')
+
+temp=0
+def show_time():
+    global temp
+    show_time.has_been_called = True
+
+    stopwatch_time=datetime.datetime.utcfromtimestamp(temp).strftime('%M:%S')
+    temp+=1
+    l1.config(text=stopwatch_time)
+    l1.after(1000, show_time)
+
+#use to know if the function was called
+show_time.has_been_called = False
 #---Interaction---------------
 def expend_cell(i):
     if 0 >= int(i) >= 180:
@@ -48,6 +63,8 @@ def open_cell_aruound(i):
         open_cell(i+18)
 
 def open_cell(i):
+    if show_time.has_been_called == False:
+        show_time()
     #don't open cell that don't exist
     if 0 > int(i) > 180:
         return
@@ -65,11 +82,12 @@ def put_x(e,i):
 #---------------------------
 
 def create_top():
+    pass
     #top of window
-    l1=Label(window,text="time")
-    l1.grid(row=0,column=0,columnspan=8)
-    l2=Label(window,text="nr")
-    l2.grid(row=0,column=6,columnspan=7)
+l1=Label(window,text="time")
+l1.grid(row=0,column=0,columnspan=8)
+l2=Label(window,text="nr")
+l2.grid(row=0,column=6,columnspan=7)
 
 def count_bombs(m,elem):
     bombs=0
