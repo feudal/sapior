@@ -12,7 +12,7 @@ label=[]
 window.wm_title("Sapior")
 window.resizable(width=0, height=0)
 window.call('wm', 'attributes', '.', '-topmost', '1')
-
+#---Interaction---------------
 def expend_cell(i):
     if 0 >= int(i) >= 180:
         return False
@@ -59,13 +59,17 @@ def open_cell(i):
         label[int(i)].config(bg="grey95",fg="grey95",text='0')
         open_cell_aruound(i)
 
+def put_x(e,i):
+    print('i =',i)
+    btn[i].config(text="X",fg='black')
+#---------------------------
+
 def create_top():
     #top of window
     l1=Label(window,text="time")
     l1.grid(row=0,column=0,columnspan=8)
     l2=Label(window,text="nr")
     l2.grid(row=0,column=6,columnspan=7)
-#------------------------------------------
 
 def count_bombs(m,elem):
     bombs=0
@@ -127,7 +131,7 @@ def to_list(m):
             l.append(n[i][j])
     print('to_list_end')
     return l
-
+#---------------------------------
 def create_borders(m):
     print('create_borders')
     n=m.copy()
@@ -167,12 +171,11 @@ def hide_borders():
             label[i].grid_forget()
             btn[i].grid_forget()
 
-#----------------------------------------------------
 def create_field():
     print('create_field')
     #plant 35 bombs in fiels map
-    map1=["*"]*25
-    map2=['']*155
+    map1=["*"]*30
+    map2=['']*150
     map=map1+map2
     #shake the list map
     shuffle(map)
@@ -191,7 +194,6 @@ def create_field():
     for i in map:
         files2.append(str(i))
     print('create_field_end')
-#------------------------------------------
 
 def arrange_labels():#labels is field with bombs
     #create 180 labels with text
@@ -204,11 +206,14 @@ def arrange_labels():#labels is field with bombs
         '3':'red',
         '4':'brown',
         '5':'brown',
+        '6':'brown',
         '-':'brown',
         '':'brown'
     }
     for i in range(len(files2)):
         label.append(Label(window,text=files2[i],fg=give_color[files2[i]],width=2))
+        if label[int(i)].cget('text') in ['1','2','3','4']:
+            label[int(i)].config(bg="grey85")
 
     #arange all label in the window
     for j in range(0,14):
@@ -217,12 +222,13 @@ def arrange_labels():#labels is field with bombs
             label[i].grid(row=j+1,column=i-17*j)
 
 def arrange_buttons():
-    #create 180 buttons with text
+    #create (238)180 buttons with text
     for i in range(238):
         files.append(str(i))
 
     for i in range(len(files)):
-        btn.append(Button(window,text=files[i],width=2,fg="grey95",command=lambda c=i:open_cell(btn[c].cget("text"))))#fg="grey95",
+        btn.append(Button(window,text=files[i],width=2,fg="grey95",command=lambda c=i:open_cell(btn[c].cget("text"))))
+        btn[i].bind("<Button-3>",lambda e,i=i:put_x(e,i))
 
     #arange all button in the window
     for j in range(0,14):
