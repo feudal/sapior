@@ -10,12 +10,27 @@ files=[]
 btn=[]
 files2=[]
 label=[]
+temp=0
+state_of_btn=[]
+nr_bombs=30
+
+for i in range(238):
+    state_of_btn.append(False)
 
 window.wm_title("Sapior")
 window.resizable(width=0, height=0)
 window.call('wm', 'attributes', '.', '-topmost', '1')
 
-temp=0
+def you_lose_window():
+    pass
+
+def you_lose():
+    for i in range(238):
+        if (label[int(i)]).cget('text') == '*':
+            btn[int(i)].grid_forget()
+            label[int(i)].config(bg="red")
+    you_lose_window()
+
 def show_time():
     global temp
     show_time.has_been_called = True
@@ -24,6 +39,11 @@ def show_time():
     temp+=1
     l1.config(text=stopwatch_time)
     l1.after(1000, show_time)
+
+def atualaze_nr_bombs(nr):
+    global nr_bombs
+    nr_bombs=nr_bombs+nr
+    l2.config(text=nr_bombs)
 
 #use to know if the function was called
 show_time.has_been_called = False
@@ -68,17 +88,34 @@ def open_cell(i):
     #don't open cell that don't exist
     if 0 > int(i) > 180:
         return
-    print(i)
-    print(btn[int(i)])
+    print('btn[',i,'] =',btn[int(i)])
     btn[int(i)].grid_forget()
     #label[int(i)].config(fg="green")#change state of label under buttons
     if(label[int(i)]).cget('text') == '':
         label[int(i)].config(bg="grey95",fg="grey95",text='0')
         open_cell_aruound(i)
+    if(label[int(i)]).cget('text') == '*':
+        you_lose()
 
 def put_x(e,i):
-    print('i =',i)
-    btn[i].config(text="X",fg='black')
+    if show_time.has_been_called == False:
+        show_time()
+
+    global state_of_btn
+    print('state_of_btn[',i,'] =',state_of_btn[i])
+
+    if state_of_btn[i] != True:
+        btn[i].config(text="X",fg='black')
+        print('config one')
+        atualaze_nr_bombs(-1)
+    else:
+        btn[i].config(text=i,fg='linen')
+        print('config two')
+        atualaze_nr_bombs(1)
+
+    state_of_btn[i] = not state_of_btn[i]
+    print('state_of_btn[',i,'] =',state_of_btn[i], "after changing\n")
+
 #---------------------------
 
 def create_top():
@@ -86,7 +123,7 @@ def create_top():
     #top of window
 l1=Label(window,text="time")
 l1.grid(row=0,column=0,columnspan=8)
-l2=Label(window,text="nr")
+l2=Label(window,text=nr_bombs)
 l2.grid(row=0,column=6,columnspan=7)
 
 def count_bombs(m,elem):
