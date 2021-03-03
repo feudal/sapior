@@ -89,7 +89,8 @@ def new_game():
         state_of_btn.append(False)
 
     try:
-        newWindow.destroy()
+        newWindow.destroy()        
+        winWindow.destroy()
     except NameError:
         pass
 
