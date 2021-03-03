@@ -18,6 +18,7 @@ nr_open_cell=0
 for i in range(238):
     state_of_btn.append(False)
 
+
 window.wm_title("Sapior")
 window.resizable(width=0, height=0)
 window.geometry("+500+300")
@@ -39,7 +40,12 @@ def you_lose_window():
 
 def new_game():
     stop_time()
-
+    global state_of_btn
+    global nr_bombs
+    global nr_open_cell
+    nr_open_cell=0
+    nr_bombs=30
+    l2.config(text=nr_bombs)
     files2=[]
     map1=["*"]*30
     map2=['']*150
@@ -74,6 +80,14 @@ def new_game():
     arrange_buttons()
     hide_borders()
 
+    for i in range(len(files)):
+        if btn[i].cget('text') == 'X':
+            btn[i].config(text=i,fg='grey95')
+
+    state_of_btn=[]
+    for i in range(238):
+        state_of_btn.append(False)
+
     try:
         newWindow.destroy()
     except NameError:
@@ -91,9 +105,14 @@ def you_lose():
         if (label[int(i)]).cget('text') == '*':
             btn[int(i)].grid_forget()
             label[int(i)].config(bg="red")
+
     you_lose_window()
 
 def you_win_window():
+    #stop timer
+    global temp
+    show_time.time_is_showing = False
+
     global winWindow
     winWindow = Toplevel(window)
     winWindow.title("you win")
@@ -121,9 +140,9 @@ show_time.time_is_showing = False
 
 def stop_time():
     global temp
-    temp=0
     show_time.time_is_showing = False
-    l1.config(text='time')
+    l1.config(text='00:00')
+    temp=0
 
 def atualaze_nr_bombs(nr):
     global nr_bombs
@@ -137,6 +156,8 @@ def expend_cell(i):
     if label[int(i)].cget('text') == '*':
         return False
     if label[int(i)].cget('text') == '-':
+        return False
+    if btn[i].open == True:
         return False
 
     return True
@@ -166,24 +187,28 @@ def open_cell_aruound(i):
         open_cell(i+18)
 
 def open_cell(i):
+    print('btn[i].open =',btn[int(i)].open)
+    btn[int(i)].open=True
     global nr_open_cell
     nr_open_cell=nr_open_cell+1
     print('nr_open_cell =',nr_open_cell)
-    if show_time.time_is_showing == False:
+    print('btn[i].open =',btn[int(i)].open)
+
+    if show_time.time_is_showing==False:
         show_time.time_is_showing=True
         show_time()
-    #don't open cell that don't exist
     if 0 > int(i) > 180:
         return
-    print('btn[',i,'] =',btn[int(i)])
+
     btn[int(i)].grid_forget()
-    #label[int(i)].config(fg="green")#change state of label under buttons
     if(label[int(i)]).cget('text') == '':
         label[int(i)].config(bg="grey95",fg="gray95",text='0')
         open_cell_aruound(i)
     if(label[int(i)]).cget('text') == '*':
         you_lose()
+
     if nr_open_cell == 150:
+        print('trigger you_win_window')
         you_win_window()
 
 def put_x(e,i):
@@ -209,9 +234,9 @@ def put_x(e,i):
 
 def create_top():
     global l1,b1,l2
-    l1=Label(window,text="time")
+    l1=Label(window,text="00:00")
     l1.grid(row=0,column=0,columnspan=7,ipadx=35,ipady=3)
-    b1=Button(window,text="new game",command=new_game)
+    b1=Button(window,text="New game",command=new_game)
     b1.grid(row=0,column=7,columnspan=3,padx=0,pady=5)
     l2=Label(window,text=nr_bombs)
     l2.grid(row=0,column=11,columnspan=3,ipadx=0,ipady=3)
@@ -374,6 +399,7 @@ def arrange_buttons():
     for i in range(len(files)):
         btn.append(Button(window,text=files[i],width=2,fg="gray95",command=lambda c=i:open_cell(btn[c].cget("text"))))
         btn[i].bind("<Button-3>",lambda e,i=i:put_x(e,i))
+        btn[i].open=False#important
 
     #arange all button in the window
     for j in range(0,14):
